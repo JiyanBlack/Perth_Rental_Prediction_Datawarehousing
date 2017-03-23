@@ -2,7 +2,6 @@ import urllib.request,urllib.parse
 import pandas
 import re
 from bs4 import BeautifulSoup
-import hashlib
 
 req_headers = {'Host': 'www.realestate.com.au',
 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36',
@@ -63,8 +62,8 @@ def parse_one_house(one_house):
     return {'url':detail_url, 'rental':price, 'bedroom':bedroom, 'bathroom':bathroom, 'carpool':carpool, 'address':address}
 
 def parse_html(cur_html):
-    with open('test.html','wb') as f:
-        f.write(cur_html)
+    # with open('test.html','wb') as f:
+    #     f.write(cur_html)
     soup = BeautifulSoup(cur_html,'lxml')
     all_article = soup.find_all('article',class_ = 'resultBody')
     # print(len(one_article))
