@@ -10,7 +10,7 @@ req_headers = {'Host': 'www.realestate.com.au',
 
 domain = "http://www.realestate.com.au"
 
-df = pandas.read_csv('./realestate_house_Perth_4000.csv')
+df = pandas.read_csv('./csvs/realestate_4000_details.csv')
 
 count = 0
 
@@ -28,15 +28,15 @@ def get_html(cur_url):
         print(e)
         return None
 
-
 def save_one_column(parsed_result):
     global count,df
     for key in parsed_result.keys():
         df.loc[count-1, key] = parsed_result[key]
+    df.loc[count-1, 'is_recorded'] = 1
 
 def save_df():
     global df
-    df.to_csv('./realestate_4000_details.csv',index=False)
+    df.to_csv('./csvs/realestate_4000_details.csv',index=False)
 
 def get_next_url():
     global df,count
@@ -47,7 +47,8 @@ def get_next_url():
             count += 1
         return url
     except Exception as e:
-
+        print(e)
+        return None
 
 def find_is_furnished(decoded_html):
     is_furnished = 0
@@ -84,16 +85,29 @@ def parse_html(html):
     is_secure = find_key_words(lower_html,['alarm','secure','intercom','fenced'])
     return {'property_type':house_type,'is_air_conditioning':is_air_conditioning, 'is_floorboard':is_floorboard,'is_furnished':is_furnished,'is_outdoor': is_outdoor,'is_sports': is_sports,'is_secure': is_secure}
 
+def check_existing_csv():
+    global df, count
+    print(df.columns)
+    if 'is_recorded' in df.columns and df.loc[0,'is_recorded'] == 1:
+        print('Existing csv file found!')
+        count = df.shape[0]-1
+        while df.loc[count, 'is_recorded'] == 0:
+            count -= 1
+        print('Start from row',count)
+    else:
+        print('No existing csv found!')
+        df['property_type'] = 'unknown'
+        df['is_air_conditioning'] = 0
+        df['is_floorboard'] = 0
+        df['is_furnished'] = 0
+        df['is_outdoor'] = 0
+        df['is_secure'] = 0
+        df['is_sports'] = 0
+        df['is_recorded'] = 0
+
 def main():
     global df,count
-    df['property_type'] = 'unknown'
-    df['is_air_conditioning'] = 0
-    df['is_floorboard'] = 0
-    df['is_furnished'] = 0
-    df['is_outdoor'] = 0
-    df['is_secure'] = 0
-    df['is_sports'] = 0
-    # print(df)
+    check_existing_csv()
     while True:
         cur_url = get_next_url()
         if not cur_url:
@@ -106,7 +120,7 @@ def main():
         parsed_result = parse_html(html)
         save_one_column(parsed_result)
         print(parsed_result)
-        if count % 10 == 1:
+        if count % 10 == 9:
             save_df()
             print('Saved at: ', count)
 
