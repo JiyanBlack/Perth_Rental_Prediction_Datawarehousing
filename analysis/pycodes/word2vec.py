@@ -3,7 +3,7 @@
 import gensim
 import pickle
 
-RESULT_PATH = '../result/'
+RESULT_PATH = '../../data/binary/'
 
 class pickle_sentence():
     input_binary = ""
@@ -20,6 +20,9 @@ class pickle_sentence():
 def produce_model(input_binary, output):
     model = gensim.models.Word2Vec(pickle_sentence(RESULT_PATH + input_binary), min_count=5, workers=4)
     model.save(RESULT_PATH + output)
+
+def read_pickle(file_name):
+    return pickle.load(open(RESULT_PATH + file_name, 'rb'))
 
 def read_model(file_name):
     return gensim.models.Word2Vec.load(RESULT_PATH + file_name)

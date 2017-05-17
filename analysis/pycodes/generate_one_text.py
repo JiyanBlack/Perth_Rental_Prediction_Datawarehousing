@@ -32,8 +32,8 @@ for file in os.listdir(Description_path):
         file_id = file.split('.')[0]
         counter += 1
 #        print(counter)
-        articles.append(cur_desc)
+        articles[file_id] = cur_desc
 #        print(articles[file_id])
 
-with open('../result/description_data_arr_porterStem', 'wb') as f:
+with open('../result/description_porterStem.dict', 'wb') as f:
     pickle.dump(articles, f)
