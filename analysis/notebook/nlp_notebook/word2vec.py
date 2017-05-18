@@ -3,7 +3,7 @@
 import gensim
 import pickle
 
-RESULT_PATH = '../result/'
+RESULT_PATH = '../../../data/binary/'
 
 class pickle_sentence():
     input_binary = ""
